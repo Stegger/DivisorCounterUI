@@ -8,16 +8,16 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("ui/sample.fxml"));
-        primaryStage.setTitle("Divisor counter");
-        primaryStage.setScene(new Scene(root, 500, 200));
-        primaryStage.show();
-    }
-
-
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("ui/sample.fxml"));
+        primaryStage.setTitle("Divisor counter");
+        int width = 500;
+        primaryStage.setScene(new Scene(root, width, 200));
+        primaryStage.show();
     }
 }

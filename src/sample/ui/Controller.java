@@ -1,9 +1,16 @@
 package sample.ui;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextField;
 import sample.logic.DivisorCounter;
-import sample.logic.Result;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Controller {
 
@@ -30,7 +37,7 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        progressBar.setProgress(0.5);
+        progressBar.setProgress(0);
         progressLabel.setText("");
         resultLabel.setText("");
 
@@ -42,20 +49,37 @@ public class Controller {
     }
 
     @FXML
-    public void start() {
+    public void start()
+    {
         Integer minimum = Integer.parseInt(txtMinimum.getText());
         Integer maximum = Integer.parseInt(txtMaximum.getText());
 
-        progressBar.setProgress(0);
         startButton.setDisable(true);
         stopButton.setDisable(false);
         resultLabel.setText("");
 
-        DivisorCounter counter = new DivisorCounter();
-        Result result = counter.calculate(minimum, maximum);
-        resultLabel.setText("The number " + result.getNumber() + " has " + result.getDivisorCounter() + " divisors!");
+        DivisorCounter counter = new DivisorCounter(minimum, maximum / 2);
+        DivisorCounter counter2 = new DivisorCounter(maximum / 2, maximum);
 
-        progressBar.setProgress(1);
+        ProgressChangeListner progressChangeListner = new ProgressChangeListner();
+        progressBar.progressProperty().bind(progressChangeListner.getProgressProperty());
+
+
+
+        ResultChangeListener resultChangeListner = new ResultChangeListener();
+        resultLabel.textProperty().bind(resultChangeListner.getTextProperty());
+
+        counter.valueProperty().addListener(resultChangeListner);
+        counter2.valueProperty().addListener(resultChangeListner);
+
+        counter.progressProperty().addListener(progressChangeListner);
+        counter2.progressProperty().addListener(progressChangeListner);
+        progressChangeListner.setNumberOfTasks(2);
+
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(counter);
+        executorService.execute(counter2);
+
         startButton.setDisable(false);
         stopButton.setDisable(true);
     }

@@ -16,4 +16,5 @@ public class Result {
     public int getNumber() {
         return this.number;
     }
+
 }
